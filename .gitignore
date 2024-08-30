@@ -1,0 +1,11 @@
+# IntelliJ
+.idea/
+*DotSettings*
+
+# Mac
+.DS_Store
+
+# MS
+**/debug
+**/bin
+**/obj
