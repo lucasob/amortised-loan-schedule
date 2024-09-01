@@ -5,23 +5,20 @@ open AmortisedInterestSchedule.Term
 open AmortisedInterestSchedule.Rate
 
 type Loan =
-    { Amount: float
+    { Amount: double
       Term: Term
       Rate: Rate }
 
     member this.GetTerm =
         let (Term t) = this.Term
-        t
+        t |> double
 
     member this.GetRate = this.Rate.Amount / 12.0
 
     member this.AmortizedPaymentAmount =
-        let value =
-            this.Amount
-            * ((this.GetRate * ((1.0 + this.GetRate) ** (this.GetTerm |> float)))
+        this.Amount
+            * ((this.GetRate * ((1.0 + this.GetRate) ** this.GetTerm))
                / (((1.0 + this.GetRate) ** (this.GetTerm |> float)) - 1.0))
-
-        Math.Round(value, 2)
 
 type Instalment =
     { OpeningBalance: float
@@ -31,22 +28,36 @@ type Instalment =
 
     member this.Total = this.Principal + this.Interest
 
-let rec ToInst' (balance: float) periods (rate: float) payment instalments =
+    member this.WithRounding(places: int) =
+        { this with
+            OpeningBalance = Math.Round(this.OpeningBalance, places)
+            ClosingBalance = Math.Round(this.ClosingBalance, places)
+            Principal = Math.Round(this.Principal, places)
+            Interest = Math.Round(this.Interest, places) }
+
+let rec ToInst' (outstandingBalance: float) periods (rate: float) amortisedPaymentAmount instalments =
     if List.length instalments = periods then
         instalments
     else
-        let interestAccruedInPeriod = Math.Round((rate * balance), 5)
-        let balanceWithInterestApplied = Math.Round((interestAccruedInPeriod + balance), 5)
-        let principalComponent = Math.Round((payment - interestAccruedInPeriod), 5)
-        let closingBalancePostPayment = Math.Round((balanceWithInterestApplied - payment), 5)
+        let interestAccruedInPeriod = rate * outstandingBalance
+        let balanceWithInterestApplied = interestAccruedInPeriod + outstandingBalance
+
+        let principalComponent =
+            if List.length instalments = (periods - 1) then
+                balanceWithInterestApplied - interestAccruedInPeriod
+            else
+                (amortisedPaymentAmount - interestAccruedInPeriod)
+
+        let actualPaymentAmount = principalComponent + interestAccruedInPeriod
+        let closingBalancePostPayment = balanceWithInterestApplied - actualPaymentAmount
 
         let nextInstalment =
-            { OpeningBalance = balance
+            { OpeningBalance = outstandingBalance
               Interest = interestAccruedInPeriod
               Principal = principalComponent
               ClosingBalance = closingBalancePostPayment }
 
-        ToInst' nextInstalment.ClosingBalance periods rate payment (nextInstalment :: instalments)
+        ToInst' nextInstalment.ClosingBalance periods rate amortisedPaymentAmount (nextInstalment :: instalments)
 
 let ToInstalments loan =
     ToInst' loan.Amount (loan.GetTerm |> int) loan.GetRate loan.AmortizedPaymentAmount []
