@@ -17,8 +17,8 @@ type Loan =
 
     member this.AmortizedPaymentAmount =
         this.Amount
-            * ((this.GetRate * ((1.0 + this.GetRate) ** this.GetTerm))
-               / (((1.0 + this.GetRate) ** (this.GetTerm |> float)) - 1.0))
+        * ((this.GetRate * ((1.0 + this.GetRate) ** this.GetTerm))
+           / (((1.0 + this.GetRate) ** (this.GetTerm |> float)) - 1.0))
 
 type Instalment =
     { OpeningBalance: float
@@ -35,7 +35,7 @@ type Instalment =
             Principal = Math.Round(this.Principal, places)
             Interest = Math.Round(this.Interest, places) }
 
-let rec ToInst' (outstandingBalance: float) periods (rate: float) amortisedPaymentAmount instalments =
+let rec private ToInst' (outstandingBalance: float) periods (rate: float) amortisedPaymentAmount instalments =
     if List.length instalments = periods then
         instalments
     else
