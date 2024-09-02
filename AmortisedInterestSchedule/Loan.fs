@@ -35,7 +35,7 @@ type Loan =
         * ((this.GetRate * ((1.0 + this.GetRate) ** this.GetTerm))
            / (((1.0 + this.GetRate) ** (this.GetTerm |> float)) - 1.0))
 
-    member private this.Instalments' (outstandingBalance: float) periods (rate: float) amortisedPaymentAmount instalments =
+    member private this.IndicativeSchedule' (outstandingBalance: float) periods (rate: float) amortisedPaymentAmount instalments =
         if List.length instalments = periods then
             instalments
         else
@@ -57,8 +57,8 @@ type Loan =
                   Principal = principalComponent
                   ClosingBalance = closingBalancePostPayment }
 
-            this.Instalments' nextInstalment.ClosingBalance periods rate amortisedPaymentAmount (nextInstalment :: instalments)
+            this.IndicativeSchedule' nextInstalment.ClosingBalance periods rate amortisedPaymentAmount (nextInstalment :: instalments)
 
-    member this.Instalments =
-        this.Instalments' this.Amount (this.GetTerm |> int) this.GetRate this.AmortizedPaymentAmount []
+    member this.IndicativeSchedule =
+        this.IndicativeSchedule' this.Amount (this.GetTerm |> int) this.GetRate this.AmortizedPaymentAmount []
         |> List.rev

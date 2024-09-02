@@ -23,7 +23,7 @@ let ``Provides a schedule whose sum is exactly that of the amortised amounts, ov
           Amount = 1000.0
           Rate = { Amount = 0.05; Frequency = Yearly } }
 
-    let scheduleTotal = loan.Instalments |> List.map (fun i -> i.Total) |> List.sum
+    let scheduleTotal = loan.IndicativeSchedule |> List.map (fun i -> i.Total) |> List.sum
     let calculatedAmortisedPaymentTotal = Math.Round((loan.AmortizedPaymentAmount * loan.GetTerm), 2)
     Assert.Equal(calculatedAmortisedPaymentTotal, Math.Round(scheduleTotal, 2))
 
@@ -34,7 +34,7 @@ let ``The schedule terminates in a with a closing balance of exactly 0`` () =
           Amount = 1000.0
           Rate = { Amount = 0.05; Frequency = Yearly } }
 
-    let finalInstalment = loan.Instalments |> List.last |> (fun i -> i.WithRounding 2)
+    let finalInstalment = loan.IndicativeSchedule |> List.last |> (fun i -> i.WithRounding 2)
 
     Assert.Equal(
         { OpeningBalance = 85.25
