@@ -9,7 +9,7 @@ open AmortisedInterestSchedule.Rate
 [<Fact>]
 let ``Calculates the correct amortised payment amount to 2 dps`` () =
     let loan =
-        { Term = Create 12s
+        { Term = Term 12s
           Amount = 1000.0
           Rate = { Amount = 0.05; Frequency = Yearly } }
 
@@ -19,7 +19,7 @@ let ``Calculates the correct amortised payment amount to 2 dps`` () =
 [<Fact>]
 let ``Provides a schedule whose sum is exactly that of the amortised amounts, over the period`` () =
     let loan =
-        { Term = Create 12s
+        { Term = Term 12s
           Amount = 1000.0
           Rate = { Amount = 0.05; Frequency = Yearly } }
 
@@ -30,7 +30,7 @@ let ``Provides a schedule whose sum is exactly that of the amortised amounts, ov
 [<Fact>]
 let ``The schedule terminates in a with a closing balance of exactly 0`` () =
     let loan =
-        { Term = Create 12s
+        { Term = Term 12s
           Amount = 1000.0
           Rate = { Amount = 0.05; Frequency = Yearly } }
 

@@ -1,5 +1,7 @@
 module AmortisedInterestSchedule.Term
 
+open AmortisedInterestSchedule.Util
+
 type Term = Term of int16
 
 let private (|ValidTerm|IllegalTerm|) (v: int16) =
@@ -8,7 +10,7 @@ let private (|ValidTerm|IllegalTerm|) (v: int16) =
     | v when v > 60s -> IllegalTerm
     | _ -> ValidTerm
 
-let Create t =
+let create t =
     match t with
     | ValidTerm -> t |> Term
     | IllegalTerm -> failwith "No"
