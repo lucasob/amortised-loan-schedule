@@ -12,7 +12,7 @@
 * This will unluck the ability to do whatever we want
 * Finally, because this is my project, in my time, it can be done in F# 🫶
 
-## Usage
+## Invocation
 
 > [!NOTE]
 > I have been to lazy to bundle up CLI validation beyond type mapping and keys
