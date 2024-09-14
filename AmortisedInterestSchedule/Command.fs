@@ -5,9 +5,8 @@ open AmortisedInterestSchedule.Util
 open AmortisedInterestSchedule.Loan
 open Microsoft.FSharp.Core
 
-let parse (arguments: string array) =
+let toLoanMap (arguments: string array) =
     match (arguments |> List.ofArray) with
-    | [] -> Error "This isn't possible"
     | _ :: parameters ->
         parameters
         |> List.partitionInto 2
@@ -18,8 +17,9 @@ let parse (arguments: string array) =
         |> List.map Option.get
         |> Map.ofList
         |> Ok
+    | _ -> Error "This isn't possible"
 
-let toLoan arguments =
+let private toLoan arguments =
     let term =
         Map.tryFind "--term" arguments
         |> function
@@ -38,16 +38,22 @@ let toLoan arguments =
             | Some t -> tryParseDouble t
             | None -> ParseError.DoubleParseError |> Error
 
-    // This is diabolical, and I am sorry, but the other option is the fish operator (Kleisli composition)
-    // and because everything here is independent (technically) it just doesn't feel right
-    term
-    |> Result.bind (fun t' -> rate |> Result.bind (fun r' -> amount |> Result.map (fun a' -> (t', r', a'))))
-    |> function
-        | Ok(t', r', a') ->
-            { Term = Term.create t'
-              Amount = a'
+    match (term, rate, amount) with
+    | Ok t, Ok r, Ok a ->
+        Ok
+            { Term = Term.create t
+              Amount = a
               Rate =
-                { Amount = r'
+                { Amount = r
                   Frequency = RateFrequency.Yearly } }
-            |> Ok
+    | _ -> "Poo" |> Error
+
+let run args =
+    args
+    |> toLoanMap
+    |> function
+        | Ok m -> toLoan m
+        | Error s -> s |> Error
+    |> function
+        | Ok loan -> Ok loan.IndicativeSchedule
         | Error e -> e |> Error

@@ -1,20 +1,12 @@
 module AmortisedInterestSchedule.Main
 
 open System.Text.Json
-open AmortisedInterestSchedule.Command
-open AmortisedInterestSchedule.Util
 
 [<EntryPoint>]
 let main argv =
-    let parsed =
-        argv
-        |> parse
-        |> function
-            | Ok m -> toLoan m
-            | Error s -> ParseError.DoubleParseError |> Error
-        |> function
-            | Ok(loan: Loan.Loan) -> JsonSerializer.Serialize(loan.IndicativeSchedule)
-            | Error e -> e |> string
+    match Command.run argv with
+    | Ok instalments -> JsonSerializer.Serialize instalments
+    | Error e -> e |> string
+    |> printfn "%s"
 
-    printf $"{parsed}"
     0

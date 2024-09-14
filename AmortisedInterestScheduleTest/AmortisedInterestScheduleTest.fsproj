@@ -8,9 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="UtilTests.fs" />
         <Compile Include="ScheduleTests.fs" />
         <Compile Include="CommandTests.fs" />
-        <Compile Include="UtilTests.fs" />
+        <Compile Include="MainTest.fs" />
     </ItemGroup>
 
     <ItemGroup>
