@@ -65,7 +65,7 @@ let ``A 12 month loan, disbursed on 1 Jan 2024, at 5% should be paid in full by 
     let disbursed = ofQuote loan disbursalDate
 
     // Get our actual schedule
-    let instalments = disbursed.schedule ()
+    let instalments = disbursed.schedule
     let (Term v) = loan.Term
 
     Assert.Equal(v |> int, List.length instalments)

@@ -3,6 +3,7 @@
 open AmortisedInterestSchedule.Term
 open AmortisedInterestSchedule.Rate
 open AmortisedInterestSchedule.Loan.Instalment
+open AmortisedInterestSchedule.Loan.Core
 
 type QuotedLoan =
     { Amount: double
@@ -16,9 +17,7 @@ type QuotedLoan =
     member this.GetRate = this.Rate.Amount / 12.0
 
     member this.AmortizedPaymentAmount =
-        this.Amount
-        * ((this.GetRate * ((1.0 + this.GetRate) ** this.GetTerm))
-           / (((1.0 + this.GetRate) ** (this.GetTerm |> float)) - 1.0))
+        amortisedPaymentAmount this.Amount this.Rate.Amount 12.0 this.GetTerm
 
     member private this.IndicativeSchedule' (outstandingBalance: float) periods (rate: float) amortisedPaymentAmount instalments =
         if List.length instalments = periods then
