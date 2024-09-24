@@ -19,7 +19,7 @@ type Instalment =
             Principal = Math.Round(this.Principal, places)
             Interest = Math.Round(this.Interest, places) }
 
-type Loan =
+type QuotedLoan =
     { Amount: double
       Term: Term
       Rate: Rate }

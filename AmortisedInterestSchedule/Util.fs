@@ -40,6 +40,5 @@ module List =
     /// <param name="inputList">The input list of values</param>
     let partitionInto n inputList =
         match inputList with
-        | i when List.length i = 1 -> [ i ]
-        | i when List.length i > 1 -> partition' n inputList
-        | _ -> []
+        | [] -> []
+        | values -> partition' n values

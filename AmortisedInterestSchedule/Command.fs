@@ -10,11 +10,10 @@ let toLoanMap (arguments: string array) =
     | _ :: parameters ->
         parameters
         |> List.partitionInto 2
-        |> List.map (function
-            | [ k; v ] -> Some(k, v)
-            | _ -> None)
-        |> List.choose Some
-        |> List.map Option.get
+        |> List.filter (function
+            | [ _; _ ] -> true
+            | _ -> false)
+        |> List.map (fun l -> (l[0], l[1]))
         |> Map.ofList
         |> Ok
     | _ -> Error "This isn't possible"
@@ -46,7 +45,7 @@ let private toLoan arguments =
               Rate =
                 { Amount = r
                   Frequency = RateFrequency.Yearly } }
-    | _ -> "Poo" |> Error
+    | _ -> "Invalid parameter(s)" |> Error
 
 let run args =
     args
