@@ -15,12 +15,18 @@ type DisbursedLoan =
     
     member this.GetTerm =
         let (Term term) = this.Term
-        term |> double
+        term |> int
 
     member this.paymentAmount =
         amortisedPaymentAmount this.Amount this.Rate.Amount 12.0 this.GetTerm
 
-    member this.schedule: Disbursed list = [] 
+    member this.dueDates =
+        [1 .. this.GetTerm] |> List.map this.DisbursalDate.AddMonths
+        
+    member this.spans =
+        let calculated = this.dueDates |> List.pairwise |> List.map (fun (l, r) -> r.Subtract(l))
+        let opening = (List.head this.dueDates).Subtract(this.DisbursalDate)
+        opening :: calculated
 
 
 let ofQuote (quote: QuotedLoan) disbursalDate =

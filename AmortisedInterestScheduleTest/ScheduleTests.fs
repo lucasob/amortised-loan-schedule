@@ -64,18 +64,21 @@ let ``A 12 month loan, disbursed on 1 Jan 2024, at 5% should be paid in full by 
     // A handle to a loan with an actual "real" schedule
     let disbursed = ofQuote loan disbursalDate
 
-    // Get our actual schedule
-    let instalments = disbursed.schedule
+    // Get our due Dates
+    let dueDates = disbursed.dueDates
+    let spans = disbursed.spans |> List.map (fun s -> s.Days)
     let (Term v) = loan.Term
 
-    Assert.Equal(v |> int, List.length instalments)
+    // Are our ranges the correct length
+    Assert.Equal(v |> int, List.length dueDates)
+    Assert.Equal(v |> int, List.length spans)
 
     // Date Validation of start
-    Assert.Equal(1, List.head instalments |> (fun i -> i.DueDate.Day))
-    Assert.Equal(2, List.head instalments |> (fun i -> i.DueDate.Month))
-    Assert.Equal(2024, List.head instalments |> (fun i -> i.DueDate.Year))
+    Assert.Equal(1, List.head dueDates |> (fun i -> i.Day))
+    Assert.Equal(2, List.head dueDates |> (fun i -> i.Month))
+    Assert.Equal(2024, List.head dueDates |> (fun i -> i.Year))
     
-    // // Date Validation of end
-    // Assert.Equal(1, List.last instalments |> (fun i -> i.DueDate.Day))
-    // Assert.Equal(1, List.last instalments |> (fun i -> i.DueDate.Month))
-    // Assert.Equal(2025, List.last instalments |> (fun i -> i.DueDate.Year))
+    // Date Validation of end
+    Assert.Equal(1, List.last dueDates |> (fun i -> i.Day))
+    Assert.Equal(1, List.last dueDates |> (fun i -> i.Month))
+    Assert.Equal(2025, List.last dueDates |> (fun i -> i.Year))
