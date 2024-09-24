@@ -57,6 +57,9 @@ let ``A 12 month loan, disbursed on 1 Jan 2024, at 5% should be paid in full by 
         { Term = Term 12s
           Amount = 1000.0
           Rate = { Amount = 0.05; Frequency = Yearly } }
+        
+    // Indicative cost
+    let indicativeCost = loan.IndicativeSchedule |> List.map (fun i -> i.Total) |> List.sum
 
     // Just parse it lol
     let disbursalDate = DateTime.Parse "2024-01-01T00:00:00Z"
@@ -82,3 +85,24 @@ let ``A 12 month loan, disbursed on 1 Jan 2024, at 5% should be paid in full by 
     Assert.Equal(1, List.last dueDates |> (fun i -> i.Day))
     Assert.Equal(1, List.last dueDates |> (fun i -> i.Month))
     Assert.Equal(2025, List.last dueDates |> (fun i -> i.Year))
+    
+    // Actually test the schedule
+    let disbursedSchedule = disbursed.schedule
+    let disbursedCost = disbursedSchedule |> List.map (fun i -> i.Total) |> List.sum
+    
+    // Compare indicative and disbursed
+    let firstDue = List.head disbursedSchedule
+    let quoted = List.head loan.IndicativeSchedule
+    
+    Assert.Equal(quoted.Total, firstDue.Total)
+    
+    // Some tolerance
+    let errorRange value = (1. / 365.) * value
+    
+    // Given the quote uses some very "applied" calculations, we cannot actually quote to a p/cent.
+    // This is also due to the fact years are kinda 365.25 days long.
+    // Given we're within 0.27% (.25 days), I'm okay.
+    Assert.InRange(disbursedCost,
+                   ( indicativeCost - errorRange indicativeCost),
+                   (indicativeCost + errorRange indicativeCost))
+    

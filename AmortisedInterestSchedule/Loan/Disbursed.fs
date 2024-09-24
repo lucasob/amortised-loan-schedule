@@ -27,6 +27,44 @@ type DisbursedLoan =
         let calculated = this.dueDates |> List.pairwise |> List.map (fun (l, r) -> r.Subtract(l))
         let opening = (List.head this.dueDates).Subtract(this.DisbursalDate)
         opening :: calculated
+        
+    member this.schedule =
+        let dayRate = this.Rate.Amount / 365.
+        let rec calc outstandingBalance rate (context: (DateTime * TimeSpan) list) =
+            match context with
+            | [] -> []
+            | [dueDate, daysToDate] ->  // last case
+                let interestInPeriod = rate * (daysToDate.Days |> double) * outstandingBalance
+                let paymentAmount = outstandingBalance
+                let principalAmount = paymentAmount - interestInPeriod
+                let closingBalance = outstandingBalance - paymentAmount
+                let latestInstalment =
+                    {OpeningBalance = outstandingBalance
+                     ClosingBalance = closingBalance
+                     Principal = principalAmount
+                     Interest = interestInPeriod
+                     DueDate = dueDate
+                     PaidDate = None
+                     Status = Status.Pending }
+                latestInstalment :: (calc closingBalance rate [])
+                
+            | (dueDate, daysToDate) :: rest ->
+                let interestInPeriod = rate * (daysToDate.Days |> double) * outstandingBalance
+                let paymentAmount = this.paymentAmount
+                let closingBalance = outstandingBalance + interestInPeriod - paymentAmount
+                let principalAmount = paymentAmount - interestInPeriod
+                let latestInstalment =
+                    {OpeningBalance = outstandingBalance
+                     ClosingBalance = closingBalance
+                     Principal = principalAmount
+                     Interest = interestInPeriod
+                     DueDate = dueDate
+                     PaidDate = None
+                     Status = Status.Pending }
+                latestInstalment :: (calc closingBalance rate rest)
+                
+        let context = List.zip this.dueDates this.spans
+        calc this.Amount dayRate context
 
 
 let ofQuote (quote: QuotedLoan) disbursalDate =

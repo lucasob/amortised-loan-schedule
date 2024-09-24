@@ -31,6 +31,9 @@ type Disbursed =
       PaidDate: DateTime option
       Status: Status }
     
+    member this.Total =
+        this.Principal + this.Interest
+    
 type Instalment =
     | Quoted
     | Disbursed
