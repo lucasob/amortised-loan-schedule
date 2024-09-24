@@ -1,23 +1,8 @@
 ﻿module AmortisedInterestSchedule.Loan.Quoted
 
-open System
 open AmortisedInterestSchedule.Term
 open AmortisedInterestSchedule.Rate
-
-type Instalment =
-    { OpeningBalance: float
-      ClosingBalance: float
-      Principal: float
-      Interest: float }
-
-    member this.Total = this.Principal + this.Interest
-
-    member this.WithRounding(places: int) =
-        { this with
-            OpeningBalance = Math.Round(this.OpeningBalance, places)
-            ClosingBalance = Math.Round(this.ClosingBalance, places)
-            Principal = Math.Round(this.Principal, places)
-            Interest = Math.Round(this.Interest, places) }
+open AmortisedInterestSchedule.Loan.Instalment
 
 type QuotedLoan =
     { Amount: double
@@ -62,3 +47,4 @@ type QuotedLoan =
     member this.IndicativeSchedule =
         this.IndicativeSchedule' this.Amount (this.GetTerm |> int) this.GetRate this.AmortizedPaymentAmount []
         |> List.rev
+

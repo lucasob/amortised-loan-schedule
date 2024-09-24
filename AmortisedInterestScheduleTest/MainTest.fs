@@ -2,7 +2,7 @@ module AmortisedInterestScheduleTest.MainTest
 
 open Xunit
 open AmortisedInterestSchedule
-open AmortisedInterestSchedule.Loan.Quoted
+open AmortisedInterestSchedule.Loan.Instalment
 
 [<Fact>]
 let ``Bootstrap -> Run main with args returns valid calculation`` () =
