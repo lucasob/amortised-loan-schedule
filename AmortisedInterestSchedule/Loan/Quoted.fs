@@ -1,4 +1,4 @@
-﻿module AmortisedInterestSchedule.Loan
+﻿module AmortisedInterestSchedule.Loan.Quoted
 
 open System
 open AmortisedInterestSchedule.Term

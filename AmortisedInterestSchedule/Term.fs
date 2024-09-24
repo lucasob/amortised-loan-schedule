@@ -1,6 +1,5 @@
 module AmortisedInterestSchedule.Term
 
-open AmortisedInterestSchedule.Util
 
 type Term = Term of int16
 

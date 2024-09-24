@@ -2,7 +2,7 @@ module AmortisedInterestSchedule.Command
 
 open AmortisedInterestSchedule.Rate
 open AmortisedInterestSchedule.Util
-open AmortisedInterestSchedule.Loan
+open AmortisedInterestSchedule.Loan.Quoted
 open Microsoft.FSharp.Core
 
 let toLoanMap (arguments: string array) =

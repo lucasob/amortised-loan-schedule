@@ -11,7 +11,7 @@
         <Compile Include="Util.fs" />
         <Compile Include="Term.fs" />
         <Compile Include="Rate.fs" />
-        <Compile Include="Loan.fs" />
+        <Compile Include="Loan\Quoted.fs" />
         <Compile Include="Command.fs" />
         <Compile Include="Main.fs" />
     </ItemGroup>

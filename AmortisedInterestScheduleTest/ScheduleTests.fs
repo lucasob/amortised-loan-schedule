@@ -2,7 +2,7 @@ module Tests
 
 open System
 open Xunit
-open AmortisedInterestSchedule.Loan
+open AmortisedInterestSchedule.Loan.Quoted
 open AmortisedInterestSchedule.Term
 open AmortisedInterestSchedule.Rate
 
